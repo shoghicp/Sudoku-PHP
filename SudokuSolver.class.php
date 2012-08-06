@@ -13,15 +13,35 @@ if(!class_exists("Sudoku")){
 	require_once(dirname(__FILE__) . "/Sudoku.class.php");
 }
 
-class SudokuSolver{
-	protected $sudoku;
-
-	public function __construct(){
-		$sudoku = new Sudoku(str_repeat(".", 81));
+class SudokuSolver extends Sudoku{
+	public function __construct($sudoku){
+		parent::__construct($sudoku);
 	}
 	
 	public function set($sudoku){
-		$sudoku = new Sudoku($sudoku);
+		parent::__construct($sudoku);
 	}
+	
+	public function isSolved(){
+		for($y = 0; $y < 9; ++$y){
+			for($x = 0; $x < 9; ++$x){
+				if(is_array($this->getCell($x, $y))){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public function solve($type = ""){
+		switch($type){
+			case "hidden_singles":
 
+				break;
+			default:
+				$this->checkCandidates();
+				$this->solve("hidden_singles");
+				break;
+		}	
+	}
 }

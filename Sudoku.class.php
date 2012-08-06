@@ -28,9 +28,8 @@ class Sudoku{
 				$this->sudoku[$y] = array();
 			}
 			$this->sudoku[$y][$x] = ($sudoku{$i} === "." or $sudoku{$i} === "0" or $sudoku{$i} === "_" or $sudoku{$i} === "*") ? array(1,2,3,4,5,6,7,8,9):intval($sudoku{$i});
+			$this->isCellSolved($x, $y);
 		}
-		$this->checkCandidates();
-		print_r($this->sudoku);
 	}
 	
 	public function getCell($x, $y){
@@ -69,7 +68,7 @@ class Sudoku{
 		return $box;
 	}
 	
-	public function isSolved($x, $z){
+	public function isCellSolved($x, $z){
 		$b = $this->getCell($x, $z);
 		
 		if($b === 0){
@@ -88,17 +87,17 @@ class Sudoku{
 	public function checkCandidates(){
 		for($x = 0; $x < 9; ++$x){
 			for($y = 0; $y < 9; ++$y){
-				if($this->isSolved($x, $y) === false){
+				if($this->isCellSolved($x, $y) === false){
 					$b = $this->getCell($x, $y);
 					for($i = 0; $i < 9; ++$i){
-						if($i !== $x and $this->isSolved($i, $y)){
+						if($i !== $x and $this->isCellSolved($i, $y)){
 							$v = $this->getCell($i, $y);
 							$j = array_search($v, $b, true);
 							if($j !== false){
 								unset($b[$j]);
 							}
 						}
-						if($i !== $y and $this->isSolved($x, $i)){
+						if($i !== $y and $this->isCellSolved($x, $i)){
 							$v = $this->getCell($x, $i);
 							$j = array_search($v, $b, true);
 							if($j !== false){
@@ -116,7 +115,7 @@ class Sudoku{
 				foreach($c as $i => $bl){
 					$bY = ($i % 3) + $y * 3;
 					$bX = floor($i / 3) + $x * 3;
-					if($this->isSolved($bX, $bY) === false){
+					if($this->isCellSolved($bX, $bY) === false){
 						foreach($c as $n){
 							if(!is_array($n)){
 								$z = array_search($n, $bl, true);
@@ -126,10 +125,41 @@ class Sudoku{
 							}
 						}
 						$this->setCell($bX, $bY, $bl);
-						$this->isSolved($bX, $bY);
+						$this->isCellSolved($bX, $bY);
 					}
 				}
 			}
 		}
+	}
+	public function display(){
+		echo PHP_EOL;
+		for($y = 0; $y < 9; ++$y){
+			echo "| - - - | - - - | - - - | - - - | - - - | - - - | - - - | - - - | - - - |".PHP_EOL;
+			$l1 = "";
+			$l2 = "";
+			$l3 = "";
+			for($x = 0; $x < 9; ++$x){
+				$b = $this->getCell($x, $y);
+				if(!is_array($b)){
+					$l1 .= "|       ";
+					$l2 .= "|   ".$b."   ";
+					$l3 .= "|       ";
+				}else{
+					for($i = 0; $i < 9; ++$i){
+						if(!isset($b[$i])){
+							$b[$i] = " ";
+						}
+					}
+					$l1 .= "| {$b[0]} {$b[1]} {$b[2]} ";
+					$l2 .= "| {$b[3]} {$b[4]} {$b[5]} ";
+					$l3 .= "| {$b[6]} {$b[7]} {$b[8]} ";
+				}
+			}
+			$l1 .= "|".PHP_EOL;
+			$l2 .= "|".PHP_EOL;
+			$l3 .= "|".PHP_EOL;
+			echo $l1.$l2.$l3;
+		}
+		echo "| - - - | - - - | - - - | - - - | - - - | - - - | - - - | - - - | - - - |".PHP_EOL;
 	}
 }
