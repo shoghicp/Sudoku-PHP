@@ -23,13 +23,18 @@ class Sudoku{
 		$this->sudoku = array();	
 		for($i = 0; $i < 81; ++$i){
 			$x = $i % 9;
-			if(($i % 9)	=== 0){
+			if(($i % 9)	== 0){
 				$y = $i / 9;
 				$this->sudoku[$y] = array();
 			}
 			$this->sudoku[$y][$x] = ($sudoku{$i} === "." or $sudoku{$i} === "0" or $sudoku{$i} === "_" or $sudoku{$i} === "*") ? array(1,2,3,4,5,6,7,8,9):intval($sudoku{$i});
 			$this->isCellSolved($x, $y);
 		}
+	}
+	
+	public function coord($x, $y){
+		$n = array("A", "B", "C", "D", "E", "F", "G", "H", "J");
+		return $n[$y] . ($x + 1);
 	}
 	
 	public function getCell($x, $y){
@@ -43,7 +48,7 @@ class Sudoku{
 	public function getColumn($x){
 		$column = array();
 		for($y = 0; $y < 9; ++$y){
-			$column[$y] = $this->getCell($x, $z);
+			$column[$y] = $this->getCell($x, $y);
 		}
 		return $column;
 	}
@@ -51,7 +56,7 @@ class Sudoku{
 	public function getRow($y){
 		$row = array();
 		for($x = 0; $x < 9; ++$x){
-			$row[$x] = $this->getCell($x, $z);
+			$row[$x] = $this->getCell($x, $y);
 		}
 		return $row;
 	}
@@ -71,10 +76,7 @@ class Sudoku{
 	public function isCellSolved($x, $z){
 		$b = $this->getCell($x, $z);
 		
-		if($b === 0){
-			$this->setCell($x, $z, array());
-			return false;
-		}elseif(is_array($b)){
+		if(is_array($b)){
 			if(count($b) === 1){
 				$this->setCell($x, $z, array_pop($b));
 				return true;
@@ -131,35 +133,41 @@ class Sudoku{
 			}
 		}
 	}
+	
+	
 	public function display(){
 		echo PHP_EOL;
 		for($y = 0; $y < 9; ++$y){
-			echo "| - - - | - - - | - - - | - - - | - - - | - - - | - - - | - - - | - - - |".PHP_EOL;
+			if($y % 3 == 0){
+				echo "#-------|-------|-------#-------|-------|-------#-------|-------|-------#".PHP_EOL;
+			}else{			
+				echo "# - - - | - - - | - - - # - - - | - - - | - - - # - - - | - - - | - - - #".PHP_EOL;
+			}
 			$l1 = "";
 			$l2 = "";
 			$l3 = "";
 			for($x = 0; $x < 9; ++$x){
 				$b = $this->getCell($x, $y);
 				if(!is_array($b)){
-					$l1 .= "|       ";
-					$l2 .= "|   ".$b."   ";
-					$l3 .= "|       ";
+					$l1 .= ($x % 3 == 0 ? "#":" ")."       ";
+					$l2 .= ($x % 3 == 0 ? "#":"|")."   ".$b."   ";
+					$l3 .= ($x % 3 == 0 ? "#":" ")."       ";
 				}else{
 					for($i = 0; $i < 9; ++$i){
 						if(!isset($b[$i])){
 							$b[$i] = " ";
 						}
 					}
-					$l1 .= "| {$b[0]} {$b[1]} {$b[2]} ";
-					$l2 .= "| {$b[3]} {$b[4]} {$b[5]} ";
-					$l3 .= "| {$b[6]} {$b[7]} {$b[8]} ";
+					$l1 .= ($x % 3 == 0 ? "#":" ")." {$b[0]} {$b[1]} {$b[2]} ";
+					$l2 .= ($x % 3 == 0 ? "#":"|")." {$b[3]} {$b[4]} {$b[5]} ";
+					$l3 .= ($x % 3 == 0 ? "#":" ")." {$b[6]} {$b[7]} {$b[8]} ";
 				}
 			}
-			$l1 .= "|".PHP_EOL;
-			$l2 .= "|".PHP_EOL;
-			$l3 .= "|".PHP_EOL;
+			$l1 .= "#".PHP_EOL;
+			$l2 .= "#".PHP_EOL;
+			$l3 .= "#".PHP_EOL;
 			echo $l1.$l2.$l3;
 		}
-		echo "| - - - | - - - | - - - | - - - | - - - | - - - | - - - | - - - | - - - |".PHP_EOL;
+		echo "#-------|-------|-------#-------|-------|-------#-------|-------|-------#".PHP_EOL;
 	}
 }
